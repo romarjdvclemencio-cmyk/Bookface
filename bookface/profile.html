@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookface - Profile</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="feed-page">
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="feed.html"><span class="logo nav-logo">bookface</span></a>
+      <div class="search-bar"><input type="text" placeholder="🔍 Search Bookface"/></div>
+    </div>
+    <div class="nav-center">
+      <a href="feed.html" class="nav-icon" title="Home">🏠</a>
+      <a href="friends.html" class="nav-icon" title="Friends">👥</a>
+      <a href="messages.html" class="nav-icon" title="Messages">💬</a>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-avatar active">👤 Me</a>
+      <a href="index.html" class="nav-icon" title="Log Out">🚪</a>
+    </div>
+  </nav>
+
+  <div class="profile-cover">
+    <div class="cover-photo"></div>
+    <div class="profile-info-bar">
+      <div class="profile-pic-wrap">
+        <div class="profile-pic-big">👤</div>
+      </div>
+      <div class="profile-name-area">
+        <h2 id="profileName">User</h2>
+        <p id="profileFriends">0 friends</p>
+      </div>
+      <div class="profile-actions">
+        <button class="btn-primary">+ Add to Story</button>
+        <button class="btn-secondary">✏️ Edit Profile</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-nav">
+    <a href="#" class="active">Posts</a>
+    <a href="#">About</a>
+    <a href="friends.html">Friends</a>
+    <a href="#">Photos</a>
+  </div>
+
+  <div class="profile-layout">
+    <aside class="profile-sidebar">
+      <div class="card">
+        <h4>Intro</h4>
+        <p>📍 Lives in Manila, Philippines</p>
+        <p>🎓 Sisters of Mary School</p>
+        <p>❤️ Single</p>
+        <p>🎂 Born January 1, 2000</p>
+        <button class="btn-secondary wide-btn">Edit Details</button>
+      </div>
+      <div class="card">
+        <h4>Photos</h4>
+        <div class="photo-grid">
+          <div class="photo-thumb">🖼️</div>
+          <div class="photo-thumb">🖼️</div>
+          <div class="photo-thumb">🖼️</div>
+          <div class="photo-thumb">🖼️</div>
+          <div class="photo-thumb">🖼️</div>
+          <div class="photo-thumb">🖼️</div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="profile-posts">
+      <div class="create-post card">
+        <div class="create-post-top">
+          <div class="avatar">👤</div>
+          <input type="text" id="profilePostInput" placeholder="What's on your mind?"/>
+        </div>
+        <hr/>
+        <div class="create-post-actions">
+          <button>📷 Photo/Video</button>
+          <button>😊 Feeling</button>
+          <button class="btn-post" onclick="addProfilePost()">Post</button>
+        </div>
+      </div>
+
+      <div id="profilePosts">
+        <div class="card post">
+          <div class="post-header">
+            <div class="avatar">👤</div>
+            <div><strong id="postUser">User</strong><p class="post-time">Yesterday · 🌐</p></div>
+          </div>
+          <p class="post-body">Welcome to my Bookface profile! 👋</p>
+          <div class="post-stats"><span>👍 42 Likes</span><span>💬 5 Comments</span></div>
+          <hr/>
+          <div class="post-actions">
+            <button onclick="likePost(this)">👍 Like</button>
+            <button>💬 Comment</button>
+            <button>↗️ Share</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    const user = localStorage.getItem('bf_user') || 'User';
+    document.getElementById('profileName').textContent = user;
+    document.getElementById('postUser').textContent = user;
+    const friends = JSON.parse(localStorage.getItem('bf_friends') || '[]');
+    document.getElementById('profileFriends').textContent = friends.length + ' friends';
+
+    function addProfilePost() {
+      const input = document.getElementById('profilePostInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const container = document.getElementById('profilePosts');
+      const post = document.createElement('div');
+      post.className = 'card post';
+      post.innerHTML = `
+        <div class="post-header"><div class="avatar">👤</div>
+          <div><strong>${user}</strong><p class="post-time">Just now · 🌐</p></div></div>
+        <p class="post-body">${text}</p>
+        <div class="post-stats"><span>👍 0 Likes</span><span>💬 0 Comments</span></div>
+        <hr/>
+        <div class="post-actions">
+          <button onclick="likePost(this)">👍 Like</button>
+          <button>💬 Comment</button>
+          <button>↗️ Share</button>
+        </div>`;
+      container.prepend(post);
+      input.value = '';
+    }
+
+    function likePost(btn) {
+      btn.style.color = '#1877f2';
+      btn.style.fontWeight = 'bold';
+    }
+  </script>
+</body>
+</html>

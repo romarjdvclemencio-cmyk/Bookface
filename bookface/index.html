@@ -1,0 +1,87 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookface - Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="auth-page">
+
+  <div class="auth-container">
+    <div class="auth-left">
+      <h1 class="logo">bookface</h1>
+      <p>Connect with friends and the world around you on Bookface.</p>
+    </div>
+
+    <div class="auth-box">
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <input type="text" id="username" placeholder="Email or phone number" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit" class="btn-primary">Log In</button>
+        <a href="#" class="forgot-link">Forgot password?</a>
+        <hr />
+        <button type="button" class="btn-green" onclick="window.location='register.html'">Create new account</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="auth-footer">
+    <p>Bookface &copy; 2026 &nbsp;|&nbsp; Privacy &nbsp;|&nbsp; Terms &nbsp;|&nbsp; Help</p>
+  </footer>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('username').value;
+      localStorage.setItem('bf_user', user);
+      window.location.href = 'feed.html';
+    }
+  </script>
+</body>
+</html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookface - Login</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body class="auth-page">
+
+  <div class="auth-container">
+    <div class="auth-left">
+      <h1 class="logo">bookface</h1>
+      <p>Connect with friends and the world around you on Bookface.</p>
+    </div>
+
+    <div class="auth-box">
+      <form id="loginForm" onsubmit="handleLogin(event)">
+        <input type="text" id="username" placeholder="Email or phone number" required />
+        <input type="password" id="password" placeholder="Password" required />
+        <button type="submit" class="btn-primary">Log In</button>
+        <a href="#" class="forgot-link">Forgot password?</a>
+        <hr />
+        <button type="button" class="btn-green" onclick="window.location='register.html'">Create new account</button>
+      </form>
+    </div>
+  </div>
+
+  <footer class="auth-footer">
+    <p>Bookface &copy; 2026 &nbsp;|&nbsp; Privacy &nbsp;|&nbsp; Terms &nbsp;|&nbsp; Help</p>
+  </footer>
+
+  <script>
+    function handleLogin(e) {
+      e.preventDefault();
+      const user = document.getElementById('username').value;
+      localStorage.setItem('bf_user', user);
+      window.location.href = 'feed.html';
+    }
+  </script>
+</body>
+</html>
+>>>>>>> 13d2493a0d840fd390139ea723820f06a43fb3e1

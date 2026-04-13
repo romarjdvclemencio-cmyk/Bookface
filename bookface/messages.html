@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookface - Messages</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="feed-page">
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="feed.html"><span class="logo nav-logo">bookface</span></a>
+    </div>
+    <div class="nav-center">
+      <a href="feed.html" class="nav-icon" title="Home">🏠</a>
+      <a href="friends.html" class="nav-icon" title="Friends">👥</a>
+      <a href="messages.html" class="nav-icon active" title="Messages">💬</a>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-avatar" id="navUser">👤 Me</a>
+      <a href="index.html" class="nav-icon" title="Log Out">🚪</a>
+    </div>
+  </nav>
+
+  <div class="messages-layout">
+
+    <!-- CONVERSATIONS LIST -->
+    <aside class="conversations-panel">
+      <div class="conv-header">
+        <h3>Messages</h3>
+        <button class="btn-icon" onclick="newConversation()">✏️</button>
+      </div>
+      <input type="text" class="conv-search" placeholder="🔍 Search messages..." oninput="filterConvs(this.value)"/>
+      <div id="convList"></div>
+    </aside>
+
+    <!-- CHAT WINDOW -->
+    <main class="chat-panel">
+      <div id="chatEmpty" class="chat-empty">
+        <div style="font-size:4rem">💬</div>
+        <h3>Your Messages</h3>
+        <p>Select a conversation or start a new one.</p>
+        <button class="btn-primary" style="width:auto;padding:10px 24px;margin-top:12px" onclick="newConversation()">New Message</button>
+      </div>
+
+      <div id="chatWindow" style="display:none;height:100%;display:none;flex-direction:column">
+        <div class="chat-header">
+          <div class="avatar">👤</div>
+          <div>
+            <strong id="chatName"></strong>
+            <p class="post-time" id="chatStatus">Active now</p>
+          </div>
+          <div style="margin-left:auto;display:flex;gap:8px">
+            <button class="btn-icon">📞</button>
+            <button class="btn-icon">📹</button>
+          </div>
+        </div>
+
+        <div id="chatMessages" class="chat-messages"></div>
+
+        <div class="chat-input-bar">
+          <button class="btn-icon">📎</button>
+          <input type="text" id="msgInput" placeholder="Aa" onkeydown="if(event.key==='Enter') sendMessage()"/>
+          <button class="btn-icon">😊</button>
+          <button class="btn-send" onclick="sendMessage()">➤</button>
+        </div>
+      </div>
+    </main>
+
+  </div>
+
+  <!-- NEW MESSAGE MODAL -->
+  <div id="newMsgModal" class="modal-overlay" style="display:none">
+    <div class="modal-box">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h3>New Message</h3>
+        <button class="btn-icon" onclick="closeModal()">✕</button>
+      </div>
+      <input type="text" id="modalSearch" placeholder="Search friends..." oninput="filterModalFriends(this.value)" style="width:100%;padding:10px;border:1px solid #dddfe2;border-radius:6px;margin-bottom:12px"/>
+      <div id="modalFriendsList"></div>
+    </div>
+  </div>
+
+  <script>
+    const user = localStorage.getItem('bf_user') || 'You';
+    document.getElementById('navUser').textContent = '👤 ' + user;
+
+    let activeChat = null;
+    let allMessages = JSON.parse(localStorage.getItem('bf_messages') || '{}');
+    let friends = JSON.parse(localStorage.getItem('bf_friends') || '[]');
+
+    // Seed some demo messages if empty
+    if (Object.keys(allMessages).length === 0 && friends.length > 0) {
+      allMessages[friends[0]] = [{ from: friends[0], text: 'Hey! Welcome to Bookface 👋', time: '10:00 AM' }];
+      saveMessages();
+    }
+
+    function saveMessages() {
+      localStorage.setItem('bf_messages', JSON.stringify(allMessages));
+    }
+
+    function getConvs() {
+      return Object.keys(allMessages).map(name => ({
+        name,
+        last: allMessages[name].slice(-1)[0] || null
+      }));
+    }
+
+    function renderConvList(filter = '') {
+      const convs = getConvs().filter(c => c.name.toLowerCase().includes(filter.toLowerCase()));
+      const list = document.getElementById('convList');
+      if (convs.length === 0) {
+        list.innerHTML = '<p style="padding:16px;color:#606770;font-size:0.9rem">No conversations yet.</p>';
+        return;
+      }
+      list.innerHTML = convs.map(c => `
+        <div class="conv-item ${activeChat === c.name ? 'active' : ''}" onclick="openChat('${c.name}')">
+          <div class="avatar" style="width:48px;height:48px;font-size:1.5rem">👤</div>
+          <div class="conv-info">
+            <strong>${c.name}</strong>
+            <p class="conv-last">${c.last ? (c.last.from === user ? 'You: ' : '') + c.last.text : 'Say hello!'}</p>
+          </div>
+          <span class="online-dot"></span>
+        </div>`).join('');
+    }
+
+    function openChat(name) {
+      activeChat = name;
+      if (!allMessages[name]) allMessages[name] = [];
+      document.getElementById('chatEmpty').style.display = 'none';
+      const win = document.getElementById('chatWindow');
+      win.style.display = 'flex';
+      document.getElementById('chatName').textContent = name;
+      renderMessages();
+      renderConvList();
+      document.getElementById('msgInput').focus();
+    }
+
+    function renderMessages() {
+      const msgs = allMessages[activeChat] || [];
+      const container = document.getElementById('chatMessages');
+      container.innerHTML = msgs.map(m => `
+        <div class="msg-row ${m.from === user ? 'msg-mine' : 'msg-theirs'}">
+          ${m.from !== user ? '<div class="avatar" style="width:32px;height:32px;font-size:1rem;align-self:flex-end">👤</div>' : ''}
+          <div class="msg-bubble ${m.from === user ? 'bubble-mine' : 'bubble-theirs'}">
+            ${m.text}
+            <span class="msg-time">${m.time}</span>
+          </div>
+        </div>`).join('');
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function sendMessage() {
+      const input = document.getElementById('msgInput');
+      const text = input.value.trim();
+      if (!text || !activeChat) return;
+      const now = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+      allMessages[activeChat].push({ from: user, text, time: now });
+      saveMessages();
+      renderMessages();
+      renderConvList();
+      input.value = '';
+
+      // Simulate reply after 1.5s
+      setTimeout(() => {
+        const replies = ['😊', 'That\'s cool!', 'Nice!', 'Haha 😄', 'I agree!', 'Tell me more!'];
+        const reply = replies[Math.floor(Math.random() * replies.length)];
+        const replyTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        allMessages[activeChat].push({ from: activeChat, text: reply, time: replyTime });
+        saveMessages();
+        renderMessages();
+        renderConvList();
+      }, 1500);
+    }
+
+    function filterConvs(val) { renderConvList(val); }
+
+    function newConversation() {
+      friends = JSON.parse(localStorage.getItem('bf_friends') || '[]');
+      document.getElementById('newMsgModal').style.display = 'flex';
+      renderModalFriends(friends);
+    }
+
+    function renderModalFriends(list) {
+      document.getElementById('modalFriendsList').innerHTML = list.length
+        ? list.map(f => `<div class="conv-item" onclick="startChat('${f}')">
+            <div class="avatar">👤</div>
+            <div class="conv-info"><strong>${f}</strong><p class="conv-last">Start a conversation</p></div>
+          </div>`).join('')
+        : '<p style="color:#606770">Add friends first to message them.</p>';
+    }
+
+    function filterModalFriends(val) {
+      renderModalFriends(friends.filter(f => f.toLowerCase().includes(val.toLowerCase())));
+    }
+
+    function startChat(name) {
+      closeModal();
+      if (!allMessages[name]) allMessages[name] = [];
+      saveMessages();
+      openChat(name);
+    }
+
+    function closeModal() {
+      document.getElementById('newMsgModal').style.display = 'none';
+    }
+
+    // Auto-open chat if ?to= param exists
+    const params = new URLSearchParams(window.location.search);
+    const toParam = params.get('to');
+    if (toParam) {
+      if (!allMessages[toParam]) allMessages[toParam] = [];
+      saveMessages();
+      openChat(toParam);
+    }
+
+    renderConvList();
+  </script>
+</body>
+</html>

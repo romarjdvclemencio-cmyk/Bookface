@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookface</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="feed-page">
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <span class="logo nav-logo">bookface</span>
+      <div class="search-bar"><input type="text" placeholder="🔍 Search Bookface"/></div>
+    </div>
+    <div class="nav-center">
+      <a href="feed.html" class="nav-icon active" title="Home">🏠</a>
+      <a href="friends.html" class="nav-icon" title="Friends">👥</a>
+      <a href="messages.html" class="nav-icon" title="Messages">💬</a>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-avatar" id="navUser">👤 Me</a>
+      <a href="#" class="nav-icon" title="Notifications">🔔</a>
+      <a href="index.html" class="nav-icon" title="Log Out">🚪</a>
+    </div>
+  </nav>
+
+  <div class="feed-layout">
+
+    <aside class="sidebar-left">
+      <a href="profile.html" class="sidebar-item"><span>👤</span> <span id="sideUser">Profile</span></a>
+      <a href="friends.html" class="sidebar-item"><span>👥</span> Friends</a>
+      <a href="messages.html" class="sidebar-item"><span>💬</span> Messages</a>
+      <a href="#" class="sidebar-item"><span>📅</span> Events</a>
+      <a href="#" class="sidebar-item"><span>🎮</span> Gaming</a>
+      <a href="#" class="sidebar-item"><span>🛒</span> Marketplace</a>
+    </aside>
+
+    <main class="feed-center">
+      <div class="create-post card">
+        <div class="create-post-top">
+          <div class="avatar">👤</div>
+          <input type="text" id="postInput" placeholder="What's on your mind?"/>
+        </div>
+        <hr/>
+        <div class="create-post-actions">
+          <button onclick="addPost()">📷 Photo/Video</button>
+          <button onclick="addPost()">😊 Feeling/Activity</button>
+          <button class="btn-post" onclick="addPost()">Post</button>
+        </div>
+      </div>
+
+      <div id="postsContainer">
+        <div class="card post">
+          <div class="post-header">
+            <div class="avatar">👤</div>
+            <div><strong>Juan dela Cruz</strong><p class="post-time">2 hours ago · 🌐</p></div>
+          </div>
+          <p class="post-body">Just joined Bookface! This is amazing 🎉</p>
+          <div class="post-stats"><span>👍 124 Likes</span><span>💬 18 Comments</span></div>
+          <hr/>
+          <div class="post-actions">
+            <button onclick="likePost(this)">👍 Like</button>
+            <button>💬 Comment</button>
+            <button>↗️ Share</button>
+          </div>
+        </div>
+        <div class="card post">
+          <div class="post-header">
+            <div class="avatar">👤</div>
+            <div><strong>Maria Santos</strong><p class="post-time">5 hours ago · 🌐</p></div>
+          </div>
+          <p class="post-body">Good morning Bookface! ☀️ Have a great day everyone!</p>
+          <div class="post-stats"><span>👍 87 Likes</span><span>💬 9 Comments</span></div>
+          <hr/>
+          <div class="post-actions">
+            <button onclick="likePost(this)">👍 Like</button>
+            <button>💬 Comment</button>
+            <button>↗️ Share</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <aside class="sidebar-right">
+      <h4>People You May Know</h4>
+      <div class="friend-suggest">
+        <div class="avatar">👤</div>
+        <div>
+          <strong>Pedro Reyes</strong><br/>
+          <small>3 mutual friends</small><br/>
+          <button class="btn-add" onclick="addFriend(this,'Pedro Reyes')">+ Add Friend</button>
+        </div>
+      </div>
+      <div class="friend-suggest">
+        <div class="avatar">👤</div>
+        <div>
+          <strong>Ana Gomez</strong><br/>
+          <small>7 mutual friends</small><br/>
+          <button class="btn-add" onclick="addFriend(this,'Ana Gomez')">+ Add Friend</button>
+        </div>
+      </div>
+      <hr/>
+      <h4>Contacts</h4>
+      <div id="contactsList"></div>
+    </aside>
+
+  </div>
+
+  <script>
+    const user = localStorage.getItem('bf_user') || 'You';
+    document.getElementById('navUser').textContent = '👤 ' + user;
+    document.getElementById('sideUser').textContent = user;
+
+    function renderContacts() {
+      const friends = JSON.parse(localStorage.getItem('bf_friends') || '[]');
+      const list = document.getElementById('contactsList');
+      if (friends.length === 0) {
+        list.innerHTML = '<p style="color:#606770;font-size:0.85rem">No friends yet. Add some!</p>';
+        return;
+      }
+      list.innerHTML = friends.map(f =>
+        `<div class="contact-item" onclick="window.location='messages.html?to=${encodeURIComponent(f)}'">
+          <span class="online-dot"></span> ${f}
+        </div>`
+      ).join('');
+    }
+    renderContacts();
+
+    function addFriend(btn, name) {
+      const friends = JSON.parse(localStorage.getItem('bf_friends') || '[]');
+      if (!friends.includes(name)) { friends.push(name); localStorage.setItem('bf_friends', JSON.stringify(friends)); }
+      btn.textContent = '✓ Friends';
+      btn.disabled = true;
+      renderContacts();
+    }
+
+    function addPost() {
+      const input = document.getElementById('postInput');
+      const text = input.value.trim();
+      if (!text) return;
+      const container = document.getElementById('postsContainer');
+      const post = document.createElement('div');
+      post.className = 'card post';
+      post.innerHTML = `
+        <div class="post-header"><div class="avatar">👤</div>
+          <div><strong>${user}</strong><p class="post-time">Just now · 🌐</p></div></div>
+        <p class="post-body">${text}</p>
+        <div class="post-stats"><span>👍 0 Likes</span><span>💬 0 Comments</span></div>
+        <hr/>
+        <div class="post-actions">
+          <button onclick="likePost(this)">👍 Like</button>
+          <button>💬 Comment</button>
+          <button>↗️ Share</button>
+        </div>`;
+      container.prepend(post);
+      input.value = '';
+    }
+
+    function likePost(btn) {
+      btn.style.color = '#1877f2';
+      btn.style.fontWeight = 'bold';
+    }
+  </script>
+</body>
+</html>
