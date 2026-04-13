@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookface - Friends</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="feed-page">
+
+  <nav class="navbar">
+    <div class="nav-left">
+      <a href="feed.html"><span class="logo nav-logo">bookface</span></a>
+      <div class="search-bar"><input type="text" id="searchInput" placeholder="🔍 Search people..." oninput="searchPeople()"/></div>
+    </div>
+    <div class="nav-center">
+      <a href="feed.html" class="nav-icon" title="Home">🏠</a>
+      <a href="friends.html" class="nav-icon active" title="Friends">👥</a>
+      <a href="messages.html" class="nav-icon" title="Messages">💬</a>
+    </div>
+    <div class="nav-right">
+      <a href="profile.html" class="nav-avatar" id="navUser">👤 Me</a>
+      <a href="index.html" class="nav-icon" title="Log Out">🚪</a>
+    </div>
+  </nav>
+
+  <div class="friends-layout">
+
+    <!-- LEFT PANEL -->
+    <aside class="friends-sidebar card">
+      <h3>Friends</h3>
+      <a href="#" class="friends-nav-item active" onclick="showTab('requests')">👋 Friend Requests <span id="reqBadge" class="badge"></span></a>
+      <a href="#" class="friends-nav-item" onclick="showTab('suggestions')">👥 People You May Know</a>
+      <a href="#" class="friends-nav-item" onclick="showTab('myFriends')">❤️ All Friends</a>
+    </aside>
+
+    <!-- RIGHT PANEL -->
+    <main class="friends-main">
+
+      <!-- Friend Requests -->
+      <div id="tab-requests">
+        <h3 style="margin-bottom:16px">Friend Requests</h3>
+        <div id="requestsList" class="friends-grid"></div>
+      </div>
+
+      <!-- Suggestions -->
+      <div id="tab-suggestions" style="display:none">
+        <h3 style="margin-bottom:16px">People You May Know</h3>
+        <div id="suggestionsList" class="friends-grid"></div>
+      </div>
+
+      <!-- My Friends -->
+      <div id="tab-myFriends" style="display:none">
+        <h3 style="margin-bottom:16px">All Friends</h3>
+        <div id="myFriendsList" class="friends-grid"></div>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    const user = localStorage.getItem('bf_user') || 'You';
+    document.getElementById('navUser').textContent = '👤 ' + user;
+
+    const allPeople = [
+      { name: 'Juan dela Cruz', mutual: 5 },
+      { name: 'Maria Santos', mutual: 3 },
+      { name: 'Pedro Reyes', mutual: 7 },
+      { name: 'Ana Gomez', mutual: 2 },
+      { name: 'Carlo Bautista', mutual: 4 },
+      { name: 'Liza Mendoza', mutual: 6 },
+      { name: 'Rico Fernandez', mutual: 1 },
+      { name: 'Jenny Cruz', mutual: 8 },
+    ];
+
+    // Simulate incoming requests (first 2 people)
+    let requests = JSON.parse(localStorage.getItem('bf_requests') || JSON.stringify([allPeople[0], allPeople[1]]));
+    let friends = JSON.parse(localStorage.getItem('bf_friends') || '[]');
+
+    function save() {
+      localStorage.setItem('bf_friends', JSON.stringify(friends));
+      localStorage.setItem('bf_requests', JSON.stringify(requests));
+    }
+
+    function friendCard(person, type) {
+      const isFriend = friends.includes(person.name);
+      let actions = '';
+      if (type === 'request') {
+        actions = `<button class="btn-primary" style="width:auto;padding:7px 14px" onclick="acceptRequest('${person.name}')">Confirm</button>
+                   <button class="btn-secondary" onclick="deleteRequest('${person.name}')">Delete</button>`;
+      } else if (type === 'suggest') {
+        actions = isFriend
+          ? `<button class="btn-secondary" disabled>✓ Friends</button>`
+          : `<button class="btn-primary" style="width:auto;padding:7px 14px" onclick="addFriend('${person.name}')">+ Add Friend</button>`;
+      } else if (type === 'friend') {
+        actions = `<button class="btn-secondary" onclick="removeFriend('${person.name}')">Unfriend</button>
+                   <button class="btn-primary" style="width:auto;padding:7px 14px" onclick="window.location='messages.html?to=${encodeURIComponent(person.name)}'">💬 Message</button>`;
+      }
+      return `<div class="friend-card card" id="fc-${person.name.replace(/ /g,'_')}">
+        <div class="friend-card-avatar">👤</div>
+        <strong>${person.name}</strong>
+        <small>${person.mutual} mutual friends</small>
+        <div class="friend-card-actions">${actions}</div>
+      </div>`;
+    }
+
+    function renderAll() {
+      const reqBadge = document.getElementById('reqBadge');
+      reqBadge.textContent = requests.length || '';
+
+      document.getElementById('requestsList').innerHTML =
+        requests.length ? requests.map(p => friendCard(p, 'request')).join('') : '<p style="color:#606770">No pending requests.</p>';
+
+      const suggestions = allPeople.filter(p => !requests.find(r => r.name === p.name));
+      document.getElementById('suggestionsList').innerHTML = suggestions.map(p => friendCard(p, 'suggest')).join('');
+
+      document.getElementById('myFriendsList').innerHTML =
+        friends.length ? friends.map(name => friendCard({ name, mutual: 0 }, 'friend')).join('') : '<p style="color:#606770">No friends yet.</p>';
+    }
+
+    function acceptRequest(name) {
+      if (!friends.includes(name)) friends.push(name);
+      requests = requests.filter(r => r.name !== name);
+      save(); renderAll();
+    }
+    function deleteRequest(name) {
+      requests = requests.filter(r => r.name !== name);
+      save(); renderAll();
+    }
+    function addFriend(name) {
+      if (!friends.includes(name)) friends.push(name);
+      save(); renderAll();
+    }
+    function removeFriend(name) {
+      friends = friends.filter(f => f !== name);
+      save(); renderAll();
+    }
+
+    function showTab(tab) {
+      ['requests','suggestions','myFriends'].forEach(t => {
+        document.getElementById('tab-'+t).style.display = t === tab ? 'block' : 'none';
+      });
+      document.querySelectorAll('.friends-nav-item').forEach(a => a.classList.remove('active'));
+      event.target.classList.add('active');
+    }
+
+    function searchPeople() {
+      const q = document.getElementById('searchInput').value.toLowerCase();
+      if (!q) { renderAll(); return; }
+      const results = allPeople.filter(p => p.name.toLowerCase().includes(q));
+      document.getElementById('suggestionsList').innerHTML = results.map(p => friendCard(p, 'suggest')).join('');
+      showTab('suggestions');
+    }
+
+    renderAll();
+  </script>
+</body>
+</html>

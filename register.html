@@ -1,0 +1,103 @@
+<<<<<<< HEAD
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookface - Sign Up</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="auth-page">
+
+  <div class="register-container">
+    <h1 class="logo" style="text-align:center;margin-bottom:4px;">bookface</h1>
+    <p style="text-align:center;color:#606770;margin-bottom:20px;">It's quick and easy.</p>
+
+    <div class="auth-box wide">
+      <h2>Create a new account</h2>
+      <form onsubmit="handleRegister(event)">
+        <div class="name-row">
+          <input type="text" placeholder="First name" required />
+          <input type="text" id="regName" placeholder="Last name" required />
+        </div>
+        <input type="text" placeholder="Mobile number or email address" required />
+        <input type="password" placeholder="New password" required />
+        <label class="dob-label">Date of birth</label>
+        <div class="name-row">
+          <select><option>Month</option><option>January</option><option>February</option><option>March</option></select>
+          <select><option>Day</option><option>1</option><option>2</option><option>3</option></select>
+          <select><option>Year</option><option>2000</option><option>2001</option><option>2002</option></select>
+        </div>
+        <label class="dob-label">Gender</label>
+        <div class="gender-row">
+          <label><input type="radio" name="gender" value="female"/> Female</label>
+          <label><input type="radio" name="gender" value="male"/> Male</label>
+          <label><input type="radio" name="gender" value="custom"/> Custom</label>
+        </div>
+        <p class="terms-text">By clicking Sign Up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+        <button type="submit" class="btn-green wide-btn">Sign Up</button>
+      </form>
+      <p style="text-align:center;margin-top:12px;"><a href="index.html">Already have an account?</a></p>
+    </div>
+  </div>
+
+  <script>
+    function handleRegister(e) {
+      e.preventDefault();
+      window.location.href = 'feed.html';
+    }
+  </script>
+</body>
+</html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Bookface - Sign Up</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body class="auth-page">
+
+  <div class="register-container">
+    <h1 class="logo" style="text-align:center;margin-bottom:4px;">bookface</h1>
+    <p style="text-align:center;color:#606770;margin-bottom:20px;">It's quick and easy.</p>
+
+    <div class="auth-box wide">
+      <h2>Create a new account</h2>
+      <form onsubmit="handleRegister(event)">
+        <div class="name-row">
+          <input type="text" placeholder="First name" required />
+          <input type="text" id="regName" placeholder="Last name" required />
+        </div>
+        <input type="text" placeholder="Mobile number or email address" required />
+        <input type="password" placeholder="New password" required />
+        <label class="dob-label">Date of birth</label>
+        <div class="name-row">
+          <select><option>Month</option><option>January</option><option>February</option><option>March</option></select>
+          <select><option>Day</option><option>1</option><option>2</option><option>3</option></select>
+          <select><option>Year</option><option>2000</option><option>2001</option><option>2002</option></select>
+        </div>
+        <label class="dob-label">Gender</label>
+        <div class="gender-row">
+          <label><input type="radio" name="gender" value="female"/> Female</label>
+          <label><input type="radio" name="gender" value="male"/> Male</label>
+          <label><input type="radio" name="gender" value="custom"/> Custom</label>
+        </div>
+        <p class="terms-text">By clicking Sign Up, you agree to our <a href="#">Terms</a> and <a href="#">Privacy Policy</a>.</p>
+        <button type="submit" class="btn-green wide-btn">Sign Up</button>
+      </form>
+      <p style="text-align:center;margin-top:12px;"><a href="index.html">Already have an account?</a></p>
+    </div>
+  </div>
+
+  <script>
+    function handleRegister(e) {
+      e.preventDefault();
+      window.location.href = 'feed.html';
+    }
+  </script>
+</body>
+</html>
+>>>>>>> 13d2493a0d840fd390139ea723820f06a43fb3e1
